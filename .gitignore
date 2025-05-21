@@ -1,0 +1,11 @@
+# 🛑 Lägg inte upp API-nycklar
+.env
+
+# ⚙️ Ignorera kompilerade Python-filer
+__pycache__/
+*.pyc
+
+# 📦 Virtuell miljö (ska aldrig pushas)
+venv/
+
+
