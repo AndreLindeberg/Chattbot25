@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 import streamlit as st
-from pypdf import PdfReader
+# from pypdf import PdfReader # Not needed
 import re
 import numpy as np
 import polars as pl
