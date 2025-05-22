@@ -48,31 +48,6 @@ def semantic_search_chunks(query, chunks, chunk_embeddings, k=3):
 
 
 
-# Function - Semantic search 
-def semantic_search(query, sentences, sentence_embeddings, k=5):
-    # Create embedding for question
-    result = genai.embed_content(
-        model="models/text-embedding-004",
-        content=query,
-        task_type="SEMANTIC_SIMILARITY"
-    )
-    query_embedding = result["embedding"]
-
-    # Cosine Similarity between question and all sentences
-    similarity_scores = []
-    for i, sentence_embedding in enumerate(sentence_embeddings): 
-        sim = cosine_similarity(query_embedding, sentence_embedding) 
-        similarity_scores.append((i, sim)) 
-
-    # Sort by similarity
-    similarity_scores.sort(key=lambda x: x[1], reverse=True)
-
-    # Return top sentences
-    top_sentences = [i for i, _ in similarity_scores[:k]] 
-    return [sentences[i] for i in top_sentences]
-
-
-
 
 # Function - Semantic Chunking
 def semantic_chunking(sentences, embeddings, threshold=0.8):
