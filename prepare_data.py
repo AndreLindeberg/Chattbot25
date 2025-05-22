@@ -120,7 +120,7 @@ def embed_chunks(chunks):
 
 if __name__ == "__main__":
     #  Ladda PDF-filer
-    pdf_folder = "data/"
+    pdf_folder = "Data/"
     pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
 
     all_text = []
