@@ -2,8 +2,6 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 import streamlit as st
-# from pypdf import PdfReader # Not needed
-import re
 import numpy as np
 import polars as pl
 
@@ -88,7 +86,7 @@ Svara endast utifrån den information som ges i kontexten och ingen annan inform
 Om du inte hittar svaret, skriv: 'Det vet jag inte.'
 Var tydlig och använd stycken eller punktlistor om det passar."""
 
-        # Promt for modellen
+        # Prompt for modellen
         user_prompt = f"Fråga: {query}\n\nHär är kontexten:\n{context}"
 
         # # Generate answer from Gemini
