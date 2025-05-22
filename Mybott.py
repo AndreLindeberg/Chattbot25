@@ -6,7 +6,6 @@ import numpy as np
 import polars as pl
 
 
-
 st.write("✅ Den nya versionen av Mybott.py körs")
 
 # API key
