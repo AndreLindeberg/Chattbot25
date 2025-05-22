@@ -10,7 +10,7 @@ import google.generativeai as genai
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# Läs PDF:er
+# Load Data / Read pdf
 pdf_folder = "data/"
 pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
 
@@ -22,7 +22,7 @@ for filename in pdf_files:
         text += page.extract_text()
     all_text.append(text)
 
-# Dela i meningar
+# Function - Split into sentences
 def split_into_sentences(text):
     return [s.strip() for s in re.split(r'(?<=\.)\s+', text) if s.strip()]
 
@@ -32,7 +32,7 @@ for doc in all_text:
 
 print(f" {len(all_sentences)} meningar extraherade")
 
-# Skapa sentence embeddings
+# Function - sentence embeddings
 def embed_sentences(sentences):
     embeddings = []
     for i, sentence in enumerate(sentences):
@@ -50,7 +50,7 @@ def embed_sentences(sentences):
 
 sentence_embeddings = embed_sentences(all_sentences)
 
-# Semantic chunking
+# Function - Semantic chunking
 def semantic_chunking(sentences, embeddings, threshold=0.8):
     chunks = []
     current_chunk = [sentences[0]]
@@ -73,7 +73,7 @@ semantic_chunks = semantic_chunking(all_sentences, sentence_embeddings)
 
 print(f" {len(semantic_chunks)} chunks skapade")
 
-# Skapa chunk-embeddings
+# Function - chunk-embeddings
 def embed_chunks(chunks):
     embeddings = []
     for i, chunk in enumerate(chunks):
@@ -91,7 +91,7 @@ def embed_chunks(chunks):
 
 chunk_embeddings = embed_chunks(semantic_chunks)
 
-# Spara vector store
+# Save vector store
 df = pl.DataFrame({
     "chunk": semantic_chunks,
     "embedding": chunk_embeddings

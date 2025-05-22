@@ -17,56 +17,6 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
 
 
-# Import data 
-pdf_folder = "data/"
-pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
-
-all_text = []
-for filename in pdf_files:
-    path = os.path.join(pdf_folder, filename)
-    reader = PdfReader(path)
-
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text()
-
-    all_text.append({"filename": filename, "text": text})
-
-
-# ----------------------------------------------------------------------------------------------------------------------------------
-
-# Function - Sentence-based chunking
-def split_into_sentences(text): 
-    sentences = re.split(r'(?<=\.)\s+', text) # Split sentences by (. ) And take away empty rows
-    return [s.strip() for s in sentences if s.strip()]
-
-all_sentences = []
-for doc in all_text:
-    sentences = split_into_sentences(doc["text"])
-    all_sentences.extend(sentences) # Puts sentences in list
-
-
-
-
-# Function - Embedding of sentences
-def embed_sentences(sentences):
-    embeddings =[]
-    for sentence in sentences:
-        try:
-            result = genai.embed_content(
-                 model="models/text-embedding-004",
-                content=sentence,
-                task_type="SEMANTIC_SIMILARITY"
-            )
-            embeddings.append(result["embedding"]) # Put result in empty place holder
-        except Exception as e:
-            print(f"Fel med meningen: {sentence[:30]}... {e}")
-            embeddings.append([0.0]*768)  # fallback-embedding if wrong
-    return embeddings
-
-
-
-
 
 # Function - Cosine Similarity
 def cosine_similarity(vec1, vec2):
@@ -168,33 +118,6 @@ def embed_chunks(chunks):
 
 
 # Vector Store ------------------------------------------------------------------------------------------
-
-# if os.path.exists("vector_store.parquet"):
-#     df = pl.read_parquet("vector_store.parquet")
-#     semantic_chunks = df["chunk"].to_list()
-#     chunk_embeddings = df["embedding"].to_list()
-# else:
-#     # If nothing is saved, bild chunks + embeddings
-#     sentence_embeddings = embed_sentences(all_sentences)
-#     semantic_chunks = semantic_chunking(all_sentences, sentence_embeddings)
-#     chunk_embeddings = embed_chunks(semantic_chunks)
-
-#     # Save with polars
-#     df = pl.DataFrame({
-#         "chunk": semantic_chunks,
-#         "embedding": chunk_embeddings
-#     })
-#     df.write_parquet("vector_store.parquet")
-
-
-
-# # Save in Polars
-# df = pl.DataFrame({
-#     "chunk": semantic_chunks,
-#     "embedding": chunk_embeddings
-# })
-# # Save to disk
-# df.write_parquet("vector_store.parquet")
 
 
 VECTOR_STORE_PATH = "vector_store.parquet"
