@@ -6,6 +6,7 @@ from pypdf import PdfReader
 from dotenv import load_dotenv
 import google.generativeai as genai
 
+
 # API-key
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -119,6 +120,8 @@ def embed_chunks(chunks):
 #----------------------------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    print("prepare_data.py körs som huvudprogram")
+
     #  Ladda PDF-filer
     pdf_folder = "Data/"
     pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
