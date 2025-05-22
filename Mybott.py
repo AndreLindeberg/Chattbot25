@@ -49,48 +49,6 @@ def semantic_search_chunks(query, chunks, chunk_embeddings, k=3):
 
 
 
-# Function - Semantic Chunking
-def semantic_chunking(sentences, embeddings, threshold=0.8):
-    chunks =[]
-    current_chunk = [sentences[0]]
-    current_vector = embeddings[0]
-
-    for i in range(1, len(sentences)):
-        sim = cosine_similarity(current_vector, embeddings[i])
-
-        if sim >= threshold:
-            current_chunk.append(sentences[i])
-        else:
-            chunks.append(" ".join(current_chunk))
-            current_chunk = [sentences[i]]
-
-        current_vector = embeddings[i]
-
-    chunks.append(" ".join(current_chunk))
-    return chunks
-
-
-
-
-
-
-# Function - Embedding chunks
-def embed_chunks(chunks):
-    embeddings = []
-    for chunk in chunks:
-        try:
-            result = genai.embed_content(
-                model="models/text-embedding-004",
-                content=chunk,
-                task_type="SEMANTIC_SIMILARITY"
-            )
-            embeddings.append(result["embedding"])
-        except Exception as e:
-            print(f"Fel i chunk: {chunk[:30]}... {e}")
-            embeddings.append([0.0]*768)
-    return embeddings
-
-
 
 # Vector Store ------------------------------------------------------------------------------------------
 
