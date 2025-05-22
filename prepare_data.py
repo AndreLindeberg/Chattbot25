@@ -26,6 +26,14 @@ for filename in pdf_files:
 
 
 
+
+# Function - Cosine Similarity
+def cosine_similarity(vec1, vec2):
+    return np.dot(vec1, vec2) / (np.linalg.norm(vec1) *
+        np.linalg.norm(vec2))
+
+
+
 # Function - Split into sentences
 def split_into_sentences(text):
     return [s.strip() for s in re.split(r'(?<=\.)\s+', text) if s.strip()]
