@@ -12,6 +12,7 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 
+# Functions --------------------------------------------------------------------------------------------------------
 
 # Function - Cosine Similarity
 def cosine_similarity(vec1, vec2):
@@ -42,7 +43,6 @@ def embed_sentences(sentences):
             print(f"Fel i mening {i}: {e}")
             embeddings.append([0.0] * 768)
     return embeddings
-
 
 
 
@@ -119,7 +119,7 @@ def embed_chunks(chunks):
 #----------------------------------------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    # 🧪 Ladda PDF-filer
+    #  Ladda PDF-filer
     pdf_folder = "data/"
     pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
 
@@ -136,50 +136,35 @@ if __name__ == "__main__":
 
 
 
+    # Divide into sentences
+    all_sentences = []
+    for doc in all_text:
+        all_sentences.extend(split_into_sentences(doc))
+
+    print(f" {len(all_sentences)} meningar extraherade")
 
 
-# Load Data / Read pdf
-pdf_folder = "data/"
-pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
-
-all_text = []
-for filename in pdf_files:
-    reader = PdfReader(os.path.join(pdf_folder, filename))
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text()
-    all_text.append(text)
+    # sentence embeddings
+    sentence_embeddings = embed_sentences(all_sentences)
 
 
-# Divide into sentences
-all_sentences = []
-for doc in all_text:
-    all_sentences.extend(split_into_sentences(doc))
-
-print(f" {len(all_sentences)} meningar extraherade")
+    # Semantic chunking
+    semantic_chunks = semantic_chunking(all_sentences, sentence_embeddings)
+    print(f" {len(semantic_chunks)} chunks skapade")
 
 
-# sentence embeddings
-sentence_embeddings = embed_sentences(all_sentences)
-
-
-# Semantic chunking
-semantic_chunks = semantic_chunking(all_sentences, sentence_embeddings)
-print(f" {len(semantic_chunks)} chunks skapade")
-
-
-# chunk-embeddings
-chunk_embeddings = embed_chunks(semantic_chunks)
+    # chunk-embeddings
+    chunk_embeddings = embed_chunks(semantic_chunks)
 
 
 
-# Save vector store
-df = pl.DataFrame({
-    "chunk": semantic_chunks,
-    "embedding": chunk_embeddings
-})
-df.write_parquet("vector_store.parquet")
+    # Save vector store
+    df = pl.DataFrame({
+        "chunk": semantic_chunks,
+        "embedding": chunk_embeddings
+    })
+    df.write_parquet("vector_store.parquet")
 
-print("Klar! Vector store sparad som vector_store.parquet")
+    print("Klar! Vector store sparad som vector_store.parquet")
 
 #-------------------------------------------------------------------------------------------------------------------------------------
