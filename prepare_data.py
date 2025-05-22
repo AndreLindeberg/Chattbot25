@@ -12,20 +12,6 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 
-# Load Data / Read pdf
-pdf_folder = "data/"
-pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
-
-all_text = []
-for filename in pdf_files:
-    reader = PdfReader(os.path.join(pdf_folder, filename))
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text()
-    all_text.append(text)
-
-
-
 
 # Function - Cosine Similarity
 def cosine_similarity(vec1, vec2):
@@ -37,12 +23,6 @@ def cosine_similarity(vec1, vec2):
 # Function - Split into sentences
 def split_into_sentences(text):
     return [s.strip() for s in re.split(r'(?<=\.)\s+', text) if s.strip()]
-
-all_sentences = []
-for doc in all_text:
-    all_sentences.extend(split_into_sentences(doc))
-
-print(f" {len(all_sentences)} meningar extraherade")
 
 
 
@@ -63,7 +43,7 @@ def embed_sentences(sentences):
             embeddings.append([0.0] * 768)
     return embeddings
 
-sentence_embeddings = embed_sentences(all_sentences)
+
 
 
 
@@ -112,9 +92,7 @@ def semantic_chunking(sentences, embeddings, threshold=0.8):
     chunks.append(" ".join(current_chunk))
     return chunks
 
-semantic_chunks = semantic_chunking(all_sentences, sentence_embeddings)
 
-print(f" {len(semantic_chunks)} chunks skapade")
 
 
 
@@ -135,8 +113,63 @@ def embed_chunks(chunks):
             embeddings.append([0.0] * 768)
     return embeddings
 
-chunk_embeddings = embed_chunks(semantic_chunks)
 
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    # 🧪 Ladda PDF-filer
+    pdf_folder = "data/"
+    pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
+
+    all_text = []
+    for filename in pdf_files:
+        path = os.path.join(pdf_folder, filename)
+        reader = PdfReader(path)
+
+        text = ""
+        for page in reader.pages:
+            text += page.extract_text()
+
+        all_text.append({"filename": filename, "text": text})
+
+
+
+
+
+# Load Data / Read pdf
+pdf_folder = "data/"
+pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
+
+all_text = []
+for filename in pdf_files:
+    reader = PdfReader(os.path.join(pdf_folder, filename))
+    text = ""
+    for page in reader.pages:
+        text += page.extract_text()
+    all_text.append(text)
+
+
+# Divide into sentences
+all_sentences = []
+for doc in all_text:
+    all_sentences.extend(split_into_sentences(doc))
+
+print(f" {len(all_sentences)} meningar extraherade")
+
+
+# sentence embeddings
+sentence_embeddings = embed_sentences(all_sentences)
+
+
+# Semantic chunking
+semantic_chunks = semantic_chunking(all_sentences, sentence_embeddings)
+print(f" {len(semantic_chunks)} chunks skapade")
+
+
+# chunk-embeddings
+chunk_embeddings = embed_chunks(semantic_chunks)
 
 
 
@@ -148,3 +181,5 @@ df = pl.DataFrame({
 df.write_parquet("vector_store.parquet")
 
 print("Klar! Vector store sparad som vector_store.parquet")
+
+#-------------------------------------------------------------------------------------------------------------------------------------
