@@ -170,31 +170,3 @@ if __name__ == "__main__":
     df.write_parquet("vector_store.parquet")
 
     print("Klar! Vector store sparad som vector_store.parquet")
-
-#-------------------------------------------------------------------------------------------------------------------------------------
-
-# Extra: Försök igen på chunkar som fick 0.0 som embedding
-print("🔁 Försöker återembeddar chunkar som misslyckades...")
-
-retries = 0
-for i in range(len(chunk_embeddings)):
-    if all(v == 0.0 for v in chunk_embeddings[i]):
-        try:
-            result = genai.embed_content(
-                model="models/text-embedding-004",
-                content=semantic_chunks[i],
-                task_type="SEMANTIC_SIMILARITY"
-            )
-            chunk_embeddings[i] = result["embedding"]
-            print(f"✅ Chunk {i} återembeddad")
-            retries += 1
-        except Exception as e:
-            print(f"❌ Misslyckades igen med chunk {i}: {e}")
-
-# Spara om vector store med uppdaterade embeddings
-df = pl.DataFrame({
-    "chunk": semantic_chunks,
-    "embedding": chunk_embeddings
-})
-df.write_parquet("vector_store.parquet")
-print(f"🎯 Klar! {retries} chunkar fick ny embedding vid andra försöket.")
