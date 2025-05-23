@@ -75,7 +75,7 @@ def semantic_search(query, sentences, sentence_embeddings, k=5):
 
 
 # Function - Semantic chunking
-def semantic_chunking(sentences, embeddings, threshold=0.8):
+def semantic_chunking(sentences, embeddings, threshold=0.8, max_chunk_words=200):
     chunks = []
     current_chunk = [sentences[0]]
     current_vector = embeddings[0]
@@ -84,7 +84,8 @@ def semantic_chunking(sentences, embeddings, threshold=0.8):
         sim = np.dot(current_vector, embeddings[i]) / (
             np.linalg.norm(current_vector) * np.linalg.norm(embeddings[i])
         )
-        if sim >= threshold:
+        current_text = " ".join(current_chunk)
+        if sim >= threshold and len(current_text.split()) < max_chunk_words:
             current_chunk.append(sentences[i])
         else:
             chunks.append(" ".join(current_chunk))
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     # Divide into sentences
     all_sentences = []
     for doc in all_text:
-        all_sentences.extend(split_into_sentences(doc))
+        all_sentences.extend(split_into_sentences(doc["text"]))
 
     print(f" {len(all_sentences)} meningar extraherade")
 
@@ -171,3 +172,29 @@ if __name__ == "__main__":
     print("Klar! Vector store sparad som vector_store.parquet")
 
 #-------------------------------------------------------------------------------------------------------------------------------------
+
+# Extra: Försök igen på chunkar som fick 0.0 som embedding
+print("🔁 Försöker återembeddar chunkar som misslyckades...")
+
+retries = 0
+for i in range(len(chunk_embeddings)):
+    if all(v == 0.0 for v in chunk_embeddings[i]):
+        try:
+            result = genai.embed_content(
+                model="models/text-embedding-004",
+                content=semantic_chunks[i],
+                task_type="SEMANTIC_SIMILARITY"
+            )
+            chunk_embeddings[i] = result["embedding"]
+            print(f"✅ Chunk {i} återembeddad")
+            retries += 1
+        except Exception as e:
+            print(f"❌ Misslyckades igen med chunk {i}: {e}")
+
+# Spara om vector store med uppdaterade embeddings
+df = pl.DataFrame({
+    "chunk": semantic_chunks,
+    "embedding": chunk_embeddings
+})
+df.write_parquet("vector_store.parquet")
+print(f"🎯 Klar! {retries} chunkar fick ny embedding vid andra försöket.")
