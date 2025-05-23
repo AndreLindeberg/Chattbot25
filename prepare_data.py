@@ -123,7 +123,7 @@ def embed_chunks(chunks):
 if __name__ == "__main__":
     print("prepare_data.py körs som huvudprogram")
 
-    #  Ladda PDF-filer
+    #  Load PDF-files
     pdf_folder = "Data/"
     pdf_files = [file for file in os.listdir(pdf_folder) if file.endswith(".pdf")]
 
