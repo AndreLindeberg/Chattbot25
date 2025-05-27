@@ -82,7 +82,7 @@ Om svaret är delvis i linje med det önskade svaret, sätt poängen 0.5. Motive
 
 
 
-# Gemini-svarsfunktion
+# Function Gemini-svarsfunktion
 def generate_response(prompt_text, user_prompt_text):
     full_prompt = f"{prompt_text}\n\n{user_prompt_text}"
     response = model.generate_content(

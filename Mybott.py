@@ -6,7 +6,7 @@ import numpy as np
 import polars as pl
 
 
-#st.write("✅ Den nya versionen av Mybott.py körs")
+#st.write("Den nya versionen av Mybott.py körs") # Testkod
 
 # API key
 load_dotenv()
@@ -25,7 +25,7 @@ def cosine_similarity(vec1, vec2):
 
 
 
-# Function - semantic search chunks
+# Function - semantic search chunks / Used to find the most relevant chunks based on a question.
 def semantic_search_chunks(query, chunks, chunk_embeddings, k=3):
     result = genai.embed_content(
         model="models/text-embedding-004",
@@ -115,6 +115,8 @@ Var tydlig och använd stycken eller punktlistor om det passar."""
 # Denna app har potential att utvecklas vidare genom att inkludera fler dokument och utökad kontext, med målet att stötta både personer som lever 
 # med typ 1-diabetes och deras anhöriga. Det råder fortfarande stor okunskap om sjukdomen, vilket kan skapa oro och missförstånd i vardagen.
 # Genom att erbjuda ett tillgängligt stöd i form av tydliga, faktabaserade svar direkt i appen, kan användare få hjälp i stunden när frågor uppstår.
+# Ett problem som ofta uppstår för folk med diabetes eller anhöriga är just att man har en fråga för stunden och inte har tillgång
+# till läkare eller sköterska. Ett problem som som appen ska lösa.
 # Appen skulle på sikt kunna erbjudas som ett digitalt stödverktyg inom vården, eller lanseras som en fristående app tillgänglig för allmänheten.
 
 # Begränsningar och juridiska överväganden:

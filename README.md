@@ -1,6 +1,8 @@
 # 🤖 Chattbot om Typ 1-diabetes
 
 Detta är ett skolprojekt som demonstrerar hur man bygger en faktabaserad chattbot med hjälp av RAG-teknik (Retrieval-Augmented Generation), Google Gemini och Streamlit.
+Streamlit-applikationen finns tillgänglig via följande länk:
+https://andrelindeberg-chattbot25-mybott-zimam8.streamlit.app/
 
 ---
 
@@ -15,7 +17,7 @@ Att skapa en interaktiv chattbot som svarar på frågor om typ 1-diabetes basera
 - **Streamlit** – gränssnitt
 - **Google Gemini API** – språkmodell
 - **Polars** – vektorlagring
-- **Semantic chunking** – för smart informationshämtning
+- **Semantic chunking** – för informationshämtning
 - **pypdf** – för att läsa in PDF-filer
 - **dotenv** – hantering av API-nyckel
 
